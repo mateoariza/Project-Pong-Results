@@ -1,0 +1,149 @@
+library IEEE; 
+use IEEE.std_logic_1164.all;
+library ALTERA;
+USE ieee.std_logic_unsigned.all;
+use ALTERA.altera_primitives_components.all;
+
+--**--
+-- Comentarios  		                        --
+--       					        --
+--                                                      --
+--**--
+
+ENTITY BCD IS
+PORT(
+--DECLARACION DE ENTRADAS Y SALIDAS DEL BLOQUE 
+		
+		Num1		:	IN 	STD_LOGIC_VECTOR (7 downto 0);
+		--less		: 	IN 	STD_LOGIC;
+		--addn_subs:	IN 	STD_LOGIC; 
+		ssegg_3	: 	OUT 	STD_LOGIC_VECTOR (6 downto 0);
+		ssegg_4	: 	OUT 	STD_LOGIC_VECTOR (6 downto 0);
+		Uni2: out STD_LOGIC_VECTOR (7 DOWNTO 0);
+		flag,flag2:  out STD_LOGIC_VECTOR (7 DOWNTO 0);
+		Dec2: out STD_LOGIC_VECTOR (3 DOWNTO 0)
+		
+	 );
+END ENTITY BCD;     
+
+ARCHITECTURE BCDArch OF BCD IS
+--Incluir componentes
+
+-- Funcionamiento: 
+
+		-- 1definir variables 
+		SIGNAL Result1		:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL Result2		:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL Result3 	:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL Result4		:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL Result5		:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL Result6		:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL Result7		:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL Result8		:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL Result9		:	STD_LOGIC_VECTOR (7 downto 0);
+		SIGNAL ten 			: 	STD_LOGIC_VECTOR (7 DOWNTO 0) := "00001010"; 
+		SIGNAL Dec			: 	STD_LOGIC_VECTOR (3 DOWNTO 0);
+		SIGNAL Uni			: 	STD_LOGIC_VECTOR (7 DOWNTO 0);
+		
+BEGIN
+--desarrollo DEL FUNCIONAMIENTO
+		Result1 <= Num1;
+      
+	oneBitModule_2: ENTITY work.full_adders
+	PORT MAP(
+				s1 => Result1,
+				s2 => ten,
+				addn_subs => '1',
+				result => Result2
+	);
+	oneBitModule_3: ENTITY work.full_adders
+	PORT MAP(
+				s1 => Result2,
+				s2 => ten,
+				addn_subs => '1',
+				result => Result3
+	);
+	oneBitModule_4: ENTITY work.full_adders
+	PORT MAP(
+				s1 => Result3,
+				s2 => ten,
+				addn_subs => '1',
+				result => Result4
+	);
+	oneBitModule_5: ENTITY work.full_adders
+	PORT MAP(
+				s1 => Result4,
+				s2 => ten,
+				addn_subs => '1',
+				result => Result5
+	);
+	oneBitModule_6: ENTITY work.full_adders
+	PORT MAP(
+				s1 => Result5,
+				s2 => ten,
+				addn_subs => '1',
+				result => Result6
+	);
+	oneBitModule_7: ENTITY work.full_adders
+	PORT MAP(
+				s1 => Result6,
+				s2 => ten,
+				addn_subs => '1',
+				result => Result7
+	);
+	oneBitModule_8: ENTITY work.full_adders
+	PORT MAP(
+				s1 => Result7,
+				s2 => ten,
+				addn_subs => '1',
+				result => Result8
+	);oneBitModule_9: ENTITY work.full_adders
+	PORT MAP(
+				s1 => Result8,
+				s2 => ten,
+				addn_subs => '1',
+				result => Result9
+	);
+	
+  Dec <= ( "0000") WHEN  Result1 < "0001010" ELSE
+			( "0001") WHEN  Result2 < "0001010" ELSE
+			( "0010") WHEN  Result3 < "0001010" ELSE
+			( "0011") WHEN  Result4 < "0001010" ELSE
+			( "0100") WHEN  Result5 < "0001010" ELSE
+			( "0101") WHEN  Result6 < "0001010" ELSE
+			( "0110") WHEN  Result7 < "0001010" ELSE 
+			( "0111") WHEN  Result8 < "0001010" ELSE
+			( "1000") WHEN  Result9 < "0001010" ELSE
+			( "1001");
+	
+		
+ Uni	<= ( Result9) WHEN  dec = "1000" ELSE
+			( Result8) WHEN  dec = "0111" ELSE
+			( Result7) WHEN  dec = "0110" ELSE
+			( Result6) WHEN  dec = "0101" ELSE
+			( Result5) WHEN  dec = "0100" ELSE
+			( Result4) WHEN  dec = "0011" ELSE 
+			( Result3) WHEN  dec = "0010" ELSE
+			( Result2) WHEN  dec = "0001" ELSE
+			( Result1); 
+ 
+ 
+ 
+ 	Uni2<= Uni;
+	flag <=result2;
+	flag2 <=result3;
+	Dec2<= Dec;
+ 
+ 
+ result_to_sseg: ENTITY work.bin_to_sseg
+	PORT MAP(
+		bin_1   	=> dec,
+		bin_2(0)		=> uni(0),
+		bin_2(1)		=> uni(1),
+		bin_2(2)		=> uni(2),
+		bin_2(3)		=> uni(3),
+		--rest		=> less, 
+		sseg3 	=> ssegg_3,
+		sseg4 	=> ssegg_4
+	);
+END BCDArch;

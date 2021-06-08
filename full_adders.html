@@ -1,0 +1,104 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.all;
+USE ieee.std_logic_unsigned.all;
+
+ENTITY full_adders IS
+	PORT(	S1				:	IN		STD_LOGIC_VECTOR(7 DOWNTO 0 );
+			S2				:	IN		STD_LOGIC_VECTOR(7 DOWNTO 0 );
+			addn_subs   :  IN    STD_LOGIC;
+			result		:	OUT 	STD_LOGIC_VECTOR(7 DOWNTO 0);
+			carry			: 	OUT  	STD_LOGIC
+
+		  );
+END ENTITY full_adders;
+ARCHITECTURE behaviour OF full_adders IS
+
+		SIGNAL C	    		:	STD_LOGIC_VECTOR(6 DOWNTO 0);
+		SIGNAL N     		:  STD_LOGIC_VECTOR(7 DOWNTO 0);
+		SIGNAL eqMult		:  STD_LOGIC_VECTOR(7 DOWNTO 0);
+		SIGNAL eq    		:  STD_LOGIC_VECTOR(7 DOWNTO 0);
+		SIGNAL noeq 	: 	STD_LOGIC_VECTOR(7 DOWNTO 0);
+BEGIN
+
+	N(0) <= S2(0) XOR addn_subs;
+	N(1) <= S2(1) XOR addn_subs;	
+	N(2) <= S2(2) XOR addn_subs;
+	N(3) <= S2(3) XOR addn_subs;
+	N(4) <= S2(4) XOR addn_subs;
+	N(5) <= S2(5) XOR addn_subs;
+	N(6) <= S2(6) XOR addn_subs;
+	N(7) <= S2(7) XOR addn_subs;
+	
+	full_adder_bit1: ENTITY work.full_adder
+	PORT MAP(
+	x    => S1(0),
+	y    => N(0),
+	cin  => addn_subs,
+	s    => eq(0),
+	cout => C(0)
+	);
+	
+	full_adder_bit2: ENTITY work.full_adder
+	PORT MAP(
+	x    => S1(1),
+	y    => N(1),
+	cin  => C(0),
+	s    => eq(1),
+	cout => C(1)
+	);
+	
+   full_adder_bit3: ENTITY work.full_adder
+	PORT MAP(
+	x    => S1(2),
+	y    => N(2),
+	cin  => C(1),
+	s    => eq(2),
+	cout => C(2)
+	);
+	
+	full_adder_bit4: ENTITY work.full_adder
+	PORT MAP(
+	x    => S1(3),
+	y    => N(3),
+	cin  => C(2),
+	s    => eq(3),
+	cout => C (3)
+	);
+	
+	full_adder_bit5: ENTITY work.full_adder
+	PORT MAP(
+	x    => S1(4),
+	y    => N(4),
+	cin  => C(3),
+	s    => eq(4),
+	cout => C (4)
+	);
+	
+	full_adder_bit6: ENTITY work.full_adder
+	PORT MAP(
+	x    => S1(5),
+	y    => N(5),
+	cin  => C(4),
+	s    => eq(5),
+	cout => C (5)
+	);
+	
+	full_adder_bit7: ENTITY work.full_adder
+	PORT MAP(
+	x    => S1(6),
+	y    => N(6),
+	cin  => C(5),
+	s    => eq(6),
+	cout => C(6)
+	);
+	
+	full_adder_bit8: ENTITY work.full_adder
+	PORT MAP(
+	x    => S1(7),
+	y    => N(7),
+	cin  => C(6),
+	s    => eq(7),
+	cout => carry
+	);
+	result <= eq;
+END ARCHITECTURE behaviour;
